@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { listingApi } from '../api/listingApi';
 import ProductGrid from '../components/ProductGrid';
-import EcoImpactCalculator from '../components/EcoImpactCalculator';
 import { useAuth } from '../context/AuthContext';
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80';
@@ -200,87 +199,6 @@ const Home = () => {
         />
       </section>
 
-
-      {/* Sustainability Impact Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-forest-700">
-              Sustainable Fashion
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-dark-900 font-editorial leading-tight">
-              Why Campus Thrift Matters for Our Planet
-            </h2>
-            <p className="text-sm sm:text-base text-muted-600 leading-relaxed">
-              The fashion industry generates 10% of global greenhouse emissions. College students cycle through wardrobes every semester. ReWear keeps premium garments in circulation.
-            </p>
-
-            <div className="space-y-3.5">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-forest-800 shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-dark-800">
-                  <strong className="text-dark-900">Reduced Carbon Footprint:</strong> Extending garment wear by just 9 months cuts its carbon impact by 27%.
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-forest-800 shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-dark-800">
-                  <strong className="text-dark-900">Student Budget Friendly:</strong> Save up to 70% compared to purchasing fast-fashion retail equivalents.
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-forest-800 shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-dark-800">
-                  <strong className="text-dark-900">Dorm Room Decluttering:</strong> Turn unworn winter jackets and unused sneakers into campus cash or cool trades.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-ivory-200/80 rounded-3xl p-8 border border-border space-y-6">
-            <h3 className="text-xl font-bold text-dark-900 font-editorial">
-              Campus Environmental Dashboard
-            </h3>
-
-            <div className="space-y-4">
-              <div className="bg-white p-4 rounded-2xl border border-border">
-                <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                  <span className="text-muted-600">Water Conserved via Resale</span>
-                  <span className="text-forest-900 font-bold">~2,700 Liters / Garment</span>
-                </div>
-                <div className="w-full bg-forest-100 rounded-full h-2">
-                  <div className="bg-forest-800 h-2 rounded-full w-[82%]" />
-                </div>
-              </div>
-
-              <div className="bg-white p-4 rounded-2xl border border-border">
-                <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                  <span className="text-muted-600">Textile Waste Diverted</span>
-                  <span className="text-forest-900 font-bold">85% Recovery Rate</span>
-                </div>
-                <div className="w-full bg-forest-100 rounded-full h-2">
-                  <div className="bg-forest-800 h-2 rounded-full w-[85%]" />
-                </div>
-              </div>
-
-              <div className="bg-white p-4 rounded-2xl border border-border">
-                <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                  <span className="text-muted-600">Active Student Traded Items</span>
-                  <span className="text-forest-900 font-bold">Campus Wide</span>
-                </div>
-                <div className="w-full bg-forest-100 rounded-full h-2">
-                  <div className="bg-forest-800 h-2 rounded-full w-[94%]" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Eco Calculator Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <EcoImpactCalculator initialGarments={4} initialShoes={1} />
-      </section>
 
       {/* Call to Action Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

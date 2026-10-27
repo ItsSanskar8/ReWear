@@ -39,7 +39,6 @@ import { dashboardApi } from '../api/userApi';
 import { formatCurrency } from '../utils/formatCurrency';
 import { formatDate, timeAgo } from '../utils/formatDate';
 import LoadingSpinner from '../components/LoadingSpinner';
-import EcoImpactCalculator from '../components/EcoImpactCalculator';
 import toast from 'react-hot-toast';
 
 const PIE_COLORS = ['#346B54', '#2B5B47', '#E11D48', '#D97706', '#64748B'];
@@ -264,15 +263,15 @@ const Dashboard = () => {
 
         <button
           type="button"
-          onClick={() => setActiveTab('sustainability')}
+          onClick={() => setActiveTab('export')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all ${
-            activeTab === 'sustainability'
+            activeTab === 'export'
               ? 'bg-forest-900 text-white shadow-sm'
               : 'text-dark-800 hover:bg-ivory-100'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-emerald-400" />
-          <span>Eco-Impact Calculator</span>
+          <FileSpreadsheet className="w-4 h-4" />
+          <span>Audit & CSV Export</span>
         </button>
       </div>
 
@@ -782,12 +781,9 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* TAB 4: SUSTAINABILITY & AUDIT EXPORT */}
-      {activeTab === 'sustainability' && (
+      {/* TAB 4: AUDIT & CSV EXPORT */}
+      {activeTab === 'export' && (
         <div className="space-y-8 animate-fade-in">
-          {/* Embedded Interactive Eco Calculator */}
-          <EcoImpactCalculator />
-
           {/* Audit Export Box */}
           <div className="bg-white border border-border rounded-3xl p-6 sm:p-8 shadow-card flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="space-y-1">

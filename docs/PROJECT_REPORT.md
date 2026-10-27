@@ -38,7 +38,6 @@ The primary objectives of ReWear are:
 * Atomic Listing Status Synchronization (Items automatically transition to `reserved` or `exchanged` when a request is accepted).
 * Admin Listings Moderation Suite: Real-time status toggling and instant spam deletion.
 * Campus User Directory & Member Telemetry.
-* Interactive Campus Eco-Impact & Sustainability Calculator (Water saved, CO2e diverted, landfill diverted, student money saved) aligned with UN SDG 12.
 * One-Click Academic Evaluation Data Export (CSV audit report generation).
 * Real-Time Telemetry & Aggregation Dashboard (MongoDB pipeline calculations of listing counts, active/reserved states, and Recharts visual breakdown).
 * User Profiles & Saved Wishlist Management.
