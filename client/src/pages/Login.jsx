@@ -9,7 +9,9 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/marketplace';
+  const from = location.state?.from?.pathname
+    ? `${location.state.from.pathname}${location.state.from.search || ''}`
+    : '/marketplace';
 
   const [formData, setFormData] = useState({
     email: '',

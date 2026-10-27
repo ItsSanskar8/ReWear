@@ -116,9 +116,11 @@ const Navbar = () => {
             <NavLink to="/" className={navLinkClass}>
               Home
             </NavLink>
-            <NavLink to="/marketplace" className={navLinkClass}>
-              Explore Marketplace
-            </NavLink>
+            {user && (
+              <NavLink to="/marketplace" className={navLinkClass}>
+                Explore Marketplace
+              </NavLink>
+            )}
             {user && (
               <NavLink to="/messages" className={navLinkClass}>
                 Messages
@@ -180,18 +182,38 @@ const Navbar = () => {
                           notifications.slice(0, 8).map((n) => (
                             <Link
                               key={n._id}
-                              to={n.link || '/my-requests'}
+                              to={n.link || (n.listing?._id ? `/listings/${n.listing._id}` : '/my-requests')}
                               onClick={() => setNotificationDropdownOpen(false)}
                               className={`block p-3 hover:bg-ivory-50 transition-colors ${
                                 !n.read ? 'bg-forest-50/50' : ''
                               }`}
                             >
-                              <p className="text-xs font-bold text-dark-900 leading-tight">
-                                {n.title}
-                              </p>
-                              <p className="text-[11px] text-muted-600 truncate mt-0.5">
-                                {n.message}
-                              </p>
+                              <div className="flex items-start gap-2.5">
+                                {n.listing?.images?.[0] ? (
+                                  <img
+                                    src={n.listing.images[0]}
+                                    alt={n.listing.title || 'Product'}
+                                    className="w-10 h-10 rounded-lg object-cover border border-border shrink-0 bg-ivory-100"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-forest-100 text-forest-800 flex items-center justify-center shrink-0">
+                                    <ShoppingBag className="w-4 h-4" />
+                                  </div>
+                                )}
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-bold text-dark-900 leading-tight">
+                                    {n.title}
+                                  </p>
+                                  <p className="text-[11px] text-muted-600 line-clamp-2 mt-0.5">
+                                    {n.message}
+                                  </p>
+                                  {n.listing?.title && (
+                                    <span className="inline-block mt-1 text-[10px] text-forest-800 font-semibold">
+                                      View product card →
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
                             </Link>
                           ))
                         )}
@@ -335,9 +357,11 @@ const Navbar = () => {
             <NavLink to="/" className={navLinkClass}>
               Home
             </NavLink>
-            <NavLink to="/marketplace" className={navLinkClass}>
-              Explore Marketplace
-            </NavLink>
+            {user && (
+              <NavLink to="/marketplace" className={navLinkClass}>
+                Explore Marketplace
+              </NavLink>
+            )}
             {user && (
               <NavLink to="/messages" className={navLinkClass}>
                 Messages

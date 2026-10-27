@@ -46,10 +46,10 @@ const createListingValidation = [
     .withMessage('Invalid listing type'),
 ];
 
-router.get('/', getListings);
-router.get('/featured', getFeaturedListings);
+router.get('/', protect, getListings);
+router.get('/featured', protect, getFeaturedListings);
 router.get('/mine', protect, getMyListings);
-router.get('/:id', getListingById);
+router.get('/:id', protect, getListingById);
 router.post('/', protect, createListingValidation, validateRequest, createListing);
 router.put('/:id', protect, updateListing);
 router.delete('/:id', protect, deleteListing);

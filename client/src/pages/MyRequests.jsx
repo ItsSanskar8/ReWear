@@ -216,12 +216,18 @@ const MyRequests = () => {
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   {/* Left: Product & Buyer Info */}
                   <div className="flex items-start gap-4">
-                    <img
-                      src={req.listing?.images?.[0] || FALLBACK_IMAGE}
-                      alt={req.listing?.title}
-                      onError={(e) => (e.target.src = FALLBACK_IMAGE)}
-                      className="w-16 h-16 rounded-xl object-cover border border-border shrink-0 bg-ivory-100"
-                    />
+                    <Link
+                      to={req.listing?._id ? `/listings/${req.listing._id}` : '#'}
+                      className="shrink-0 group block"
+                      title="View product details"
+                    >
+                      <img
+                        src={req.listing?.images?.[0] || FALLBACK_IMAGE}
+                        alt={req.listing?.title}
+                        onError={(e) => (e.target.src = FALLBACK_IMAGE)}
+                        className="w-16 h-16 rounded-xl object-cover border border-border group-hover:scale-105 transition-transform bg-ivory-100"
+                      />
+                    </Link>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         {getStatusBadge(req.status)}
@@ -230,9 +236,13 @@ const MyRequests = () => {
                         </span>
                       </div>
 
-                      <h3 className="text-base font-bold text-dark-900">
-                        {req.listing?.title || 'Listing item'}
-                      </h3>
+                      <Link
+                        to={req.listing?._id ? `/listings/${req.listing._id}` : '#'}
+                        className="text-base font-bold text-dark-900 hover:text-forest-800 transition-colors block line-clamp-1 group"
+                        title="View product details"
+                      >
+                        <span className="group-hover:underline">{req.listing?.title || 'Listing item'}</span>
+                      </Link>
 
                       <p className="text-xs text-muted-600 flex items-center gap-1.5 mt-0.5">
                         <span>Buyer:</span>
@@ -351,12 +361,18 @@ const MyRequests = () => {
               >
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <img
-                      src={req.listing?.images?.[0] || FALLBACK_IMAGE}
-                      alt={req.listing?.title}
-                      onError={(e) => (e.target.src = FALLBACK_IMAGE)}
-                      className="w-16 h-16 rounded-xl object-cover border border-border shrink-0 bg-ivory-100"
-                    />
+                    <Link
+                      to={req.listing?._id ? `/listings/${req.listing._id}` : '#'}
+                      className="shrink-0 group block"
+                      title="View product details"
+                    >
+                      <img
+                        src={req.listing?.images?.[0] || FALLBACK_IMAGE}
+                        alt={req.listing?.title}
+                        onError={(e) => (e.target.src = FALLBACK_IMAGE)}
+                        className="w-16 h-16 rounded-xl object-cover border border-border group-hover:scale-105 transition-transform shrink-0 bg-ivory-100"
+                      />
+                    </Link>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-1">
                         {getStatusBadge(req.status)}

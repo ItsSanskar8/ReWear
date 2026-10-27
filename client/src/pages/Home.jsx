@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Tag,
   CheckCircle2,
+  Lock,
 } from 'lucide-react';
 import { listingApi } from '../api/listingApi';
 import ProductGrid from '../components/ProductGrid';
@@ -30,10 +31,16 @@ const categories = [
 const Home = () => {
   const { user } = useAuth();
   const [featuredListings, setFeaturedListings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [heroImg, setHeroImg] = useState(HERO_IMAGE);
 
   useEffect(() => {
+    if (!user) {
+      setFeaturedListings([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchFeatured = async () => {
       try {
         setLoading(true);
@@ -49,7 +56,7 @@ const Home = () => {
     };
 
     fetchFeatured();
-  }, []);
+  }, [user]);
 
   return (
     <div className="space-y-20 pb-16">
@@ -74,8 +81,11 @@ const Home = () => {
               </p>
 
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
-                <Link to="/marketplace" className="btn-primary text-base px-6 py-3">
-                  <span>Explore Marketplace</span>
+                <Link
+                  to={user ? '/marketplace' : '/login'}
+                  className="btn-primary text-base px-6 py-3"
+                >
+                  <span>{user ? 'Explore Marketplace' : 'Sign In to View Products'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -145,7 +155,7 @@ const Home = () => {
             </h2>
           </div>
           <Link
-            to="/marketplace"
+            to={user ? '/marketplace' : '/login'}
             className="text-sm font-semibold text-forest-800 hover:text-forest-900 flex items-center gap-1.5"
           >
             <span>View All Categories</span>
@@ -157,7 +167,7 @@ const Home = () => {
           {categories.map((cat) => (
             <Link
               key={cat.name}
-              to={`/marketplace?category=${cat.query}`}
+              to={user ? `/marketplace?category=${cat.query}` : '/login'}
               className="card-premium p-4 flex flex-col items-center text-center hover:border-forest-800 hover:shadow-card-hover transition-all group"
             >
               <div className="w-12 h-12 rounded-2xl bg-forest-50 text-forest-800 group-hover:bg-forest-800 group-hover:text-white transition-colors flex items-center justify-center mb-3">
@@ -170,35 +180,59 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products Section (Connected to MongoDB Express API) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-forest-700">
-              Fresh Drops
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-dark-900 mt-1 font-editorial">
-              Featured Campus Listings
-            </h2>
+      {/* Featured Products Section (Requires Authentication) */}
+      {user ? (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-forest-700">
+                Fresh Drops
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-dark-900 mt-1 font-editorial">
+                Featured Campus Listings
+              </h2>
+            </div>
+            <Link
+              to="/marketplace"
+              className="text-sm font-semibold text-forest-800 hover:text-forest-900 flex items-center gap-1.5"
+            >
+              <span>Explore All ({featuredListings.length > 0 ? `${featuredListings.length}+` : 'Browse'})</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <Link
-            to="/marketplace"
-            className="text-sm font-semibold text-forest-800 hover:text-forest-900 flex items-center gap-1.5"
-          >
-            <span>Explore All ({featuredListings.length > 0 ? `${featuredListings.length}+` : 'Browse'})</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
 
-        <ProductGrid
-          listings={featuredListings}
-          loading={loading}
-          skeletonCount={8}
-          emptyTitle="No featured items available right now"
-          emptyDescription="Be the first student to publish an item today!"
-        />
-      </section>
-
+          <ProductGrid
+            listings={featuredListings}
+            loading={loading}
+            skeletonCount={8}
+            emptyTitle="No featured items available right now"
+            emptyDescription="Be the first student to publish an item today!"
+          />
+        </section>
+      ) : (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="card-premium p-8 sm:p-12 text-center border-dashed border-2 border-forest-200 bg-forest-50/40 rounded-3xl">
+            <div className="w-14 h-14 rounded-2xl bg-forest-100 text-forest-800 flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <Lock className="w-7 h-7" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-dark-900 font-editorial mb-2">
+              Campus Marketplace & Products are Member-Only
+            </h2>
+            <p className="text-sm sm:text-base text-muted-600 max-w-lg mx-auto mb-6">
+              Listing items and browsing the marketplace requires an authenticated student account. Sign in or register to explore campus products and trade sustainably.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3.5">
+              <Link to="/login" className="btn-primary text-sm px-6 py-2.5">
+                <span>Sign In to View Products</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link to="/register" className="btn-outline text-sm px-6 py-2.5">
+                <span>Create Student Account</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Call to Action Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -215,10 +249,10 @@ const Home = () => {
                 Create Free Student Account
               </Link>
               <Link
-                to="/marketplace"
+                to={user ? '/marketplace' : '/login'}
                 className="btn-outline bg-transparent text-white border-white/40 hover:bg-white/10 hover:border-white text-base px-6 py-3"
               >
-                Browse Marketplace
+                {user ? 'Browse Marketplace' : 'Sign In to Browse Marketplace'}
               </Link>
             </div>
           </div>

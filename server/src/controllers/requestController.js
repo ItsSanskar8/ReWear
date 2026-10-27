@@ -1,5 +1,6 @@
 const Request = require('../models/Request');
 const Listing = require('../models/Listing');
+const Notification = require('../models/Notification');
 const asyncHandler = require('../utils/asyncHandler');
 
 // @desc    Submit a purchase or exchange request
@@ -78,6 +79,24 @@ const createRequest = asyncHandler(async (req, res) => {
     exchangeItemOffered: exchangeItemOffered ? exchangeItemOffered.trim() : '',
     status: 'pending',
   });
+
+  // Notify seller that a buyer wants to buy or exchange their product
+  try {
+    const isPurchase = type === 'purchase';
+    await Notification.create({
+      recipient: listing.seller,
+      sender: req.user._id,
+      listing: listing._id,
+      title: isPurchase ? 'New Purchase Request' : 'New Exchange Proposal',
+      message: isPurchase
+        ? `${req.user.name} wants to buy your product "${listing.title}".`
+        : `${req.user.name} wants to exchange for your product "${listing.title}".`,
+      link: `/listings/${listing._id}`,
+      type: 'request',
+    });
+  } catch (notifErr) {
+    console.error('Failed to create buy notification for seller:', notifErr.message);
+  }
 
   const populatedRequest = await Request.findById(newRequest._id)
     .populate('listing', 'title price images category condition status')
@@ -185,6 +204,21 @@ const acceptRequest = asyncHandler(async (req, res) => {
     { $set: { status: 'rejected' } }
   );
 
+  // Notify buyer that their request was accepted
+  try {
+    await Notification.create({
+      recipient: request.buyer,
+      sender: req.user._id,
+      listing: listing._id,
+      title: 'Trade Request Accepted!',
+      message: `${req.user.name} accepted your ${request.type} request for "${listing.title}".`,
+      link: `/listings/${listing._id}`,
+      type: 'request',
+    });
+  } catch (notifErr) {
+    console.error('Failed to create accept notification:', notifErr.message);
+  }
+
   const populated = await Request.findById(request._id)
     .populate('listing', 'title price images category condition status')
     .populate('buyer', 'name email college avatar');
@@ -226,6 +260,21 @@ const rejectRequest = asyncHandler(async (req, res) => {
 
   request.status = 'rejected';
   await request.save();
+
+  // Notify buyer that their request was rejected
+  try {
+    await Notification.create({
+      recipient: request.buyer,
+      sender: req.user._id,
+      listing: request.listing,
+      title: 'Request Declined',
+      message: `${req.user.name} declined your request.`,
+      link: `/listings/${request.listing}`,
+      type: 'request',
+    });
+  } catch (notifErr) {
+    console.error('Failed to create reject notification:', notifErr.message);
+  }
 
   const populated = await Request.findById(request._id)
     .populate('listing', 'title price images category condition status')

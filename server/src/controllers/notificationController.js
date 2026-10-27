@@ -8,7 +8,8 @@ const getMyNotifications = asyncHandler(async (req, res) => {
   const notifications = await Notification.find({ recipient: req.user._id })
     .sort({ createdAt: -1 })
     .limit(30)
-    .populate('sender', 'name avatar');
+    .populate('sender', 'name avatar')
+    .populate('listing', 'title images price category condition');
 
   const unreadCount = await Notification.countDocuments({
     recipient: req.user._id,
