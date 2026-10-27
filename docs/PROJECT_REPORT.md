@@ -30,9 +30,16 @@ The primary objectives of ReWear are:
 ## 4. Scope
 ### In Scope:
 * Complete User Authentication (Registration, Login, Session Restoration, and Logout via HTTP-only cookies).
+* Role-Based Access Control (RBAC): Dedicated Platform Administrator role for Sanskar Bhanderi (`sanskarbhanderi08@gmail.com`) with exclusive access to the Admin Control Panel.
 * Full CRUD for Marketplace Listings (Creation, Browsing, Searching, Multi-Parameter Filtering, Sorting, Updating, Deletion).
-* Two-Way Campus Trade Workflow (Submitting purchase/exchange requests, reviewing incoming requests, seller acceptance/rejection).
+* Live Views Counter Telemetry & 1-Click Social Sharing on all marketplace listings.
+* Interactive Campus Community Q&A System: Public questioning and seller answering subdocuments on every item.
+* Two-Way Campus Trade Workflow with Structured Meetup Coordination (Preset high-traffic campus pickup zones, preferred time slots, and counter-offered trade items).
 * Atomic Listing Status Synchronization (Items automatically transition to `reserved` or `exchanged` when a request is accepted).
+* Admin Listings Moderation Suite: Real-time status toggling and instant spam deletion.
+* Campus User Directory & Member Telemetry.
+* Interactive Campus Eco-Impact & Sustainability Calculator (Water saved, CO2e diverted, landfill diverted, student money saved) aligned with UN SDG 12.
+* One-Click Academic Evaluation Data Export (CSV audit report generation).
 * Real-Time Telemetry & Aggregation Dashboard (MongoDB pipeline calculations of listing counts, active/reserved states, and Recharts visual breakdown).
 * User Profiles & Saved Wishlist Management.
 
@@ -210,6 +217,7 @@ erDiagram
         string password "bcrypt hashed, select false"
         string college
         string avatar
+        enum role "user, admin (default user)"
         ObjectId[] wishlist "ref Listing"
         date createdAt
         date updatedAt
@@ -226,6 +234,8 @@ erDiagram
         enum listingType "For Sale, For Exchange"
         string[] images "validated array of URLs"
         string exchangePreference "max 300"
+        number viewsCount "min 0, default 0"
+        object[] questions "user, userName, question, answer, createdAt"
         ObjectId seller FK "ref User, indexed"
         enum status "active, reserved, exchanged, sold, inactive"
         date createdAt
@@ -239,6 +249,9 @@ erDiagram
         ObjectId seller FK "ref User, indexed"
         enum type "purchase, exchange"
         string message "max 500"
+        string meetupLocation "Campus library, union, quad, etc."
+        string preferredTime "e.g., today 4-6 PM, flexible"
+        string exchangeItemOffered "item description offered in swap"
         enum status "pending, accepted, rejected, cancelled"
         date createdAt
         date updatedAt

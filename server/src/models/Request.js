@@ -34,6 +34,22 @@ const requestSchema = new mongoose.Schema(
       default: '',
       maxlength: [500, 'Message cannot exceed 500 characters'],
     },
+    meetupLocation: {
+      type: String,
+      trim: true,
+      default: 'Campus Library Front Entrance',
+    },
+    preferredTime: {
+      type: String,
+      trim: true,
+      default: 'Flexible',
+    },
+    exchangeItemOffered: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: [200, 'Exchange item description cannot exceed 200 characters'],
+    },
     status: {
       type: String,
       enum: ['pending', 'accepted', 'rejected', 'cancelled'],

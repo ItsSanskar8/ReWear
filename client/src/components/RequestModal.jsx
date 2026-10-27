@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
-import { X, Send, ShoppingBag, ArrowLeftRight, Info } from 'lucide-react';
+import { X, Send, ShoppingBag, ArrowLeftRight, Info, MapPin, Clock, PackageCheck } from 'lucide-react';
 import { requestApi } from '../api/requestApi';
 import toast from 'react-hot-toast';
+
+const CAMPUS_LOCATIONS = [
+  'Campus Library Front Entrance (Recommended)',
+  'Student Center & Dining Commons',
+  'North Academic Quad / Science Hall',
+  'Athletics & Recreation Complex',
+  'Main Campus Transit Hub & Gate',
+  'Residence Hall Central Lounge',
+];
+
+const TIME_SLOTS = [
+  'Flexible / Any Daytime Slot',
+  'Today After Class (4:00 PM - 6:00 PM)',
+  'Tomorrow Morning (10:00 AM - 12:00 PM)',
+  'Tomorrow Afternoon (1:00 PM - 3:30 PM)',
+  'Weekend Campus Meetup',
+];
 
 const RequestModal = ({ isOpen, onClose, listing, onSuccess, initialType = 'purchase' }) => {
   const [type, setType] = useState(initialType);
   const [message, setMessage] = useState('');
+  const [meetupLocation, setMeetupLocation] = useState(CAMPUS_LOCATIONS[0]);
+  const [preferredTime, setPreferredTime] = useState(TIME_SLOTS[0]);
+  const [exchangeItemOffered, setExchangeItemOffered] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen || !listing) return null;
@@ -19,6 +39,9 @@ const RequestModal = ({ isOpen, onClose, listing, onSuccess, initialType = 'purc
         listingId: listing._id,
         type,
         message: message.trim(),
+        meetupLocation,
+        preferredTime,
+        exchangeItemOffered: type === 'exchange' ? exchangeItemOffered.trim() : '',
       });
 
       toast.success(res.message || 'Request sent successfully!');
@@ -34,7 +57,7 @@ const RequestModal = ({ isOpen, onClose, listing, onSuccess, initialType = 'purc
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
       <div
-        className="w-full max-w-lg bg-white rounded-3xl shadow-dropdown border border-border p-6 overflow-hidden max-h-[90vh] overflow-y-auto"
+        className="w-full max-w-lg bg-white rounded-3xl shadow-dropdown border border-border p-6 overflow-hidden max-h-[92vh] overflow-y-auto"
         role="dialog"
       >
         <div className="flex items-start justify-between pb-4 border-b border-border">
@@ -106,40 +129,95 @@ const RequestModal = ({ isOpen, onClose, listing, onSuccess, initialType = 'purc
             </div>
           </div>
 
-          {/* Exchange preference display if applicable */}
-          {listing.exchangePreference && (
-            <div className="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl text-xs text-emerald-900">
-              <span className="font-semibold">Seller’s Exchange Preference:</span> {listing.exchangePreference}
+          {/* Exchange item offered input */}
+          {type === 'exchange' && (
+            <div className="p-3.5 bg-emerald-50/60 border border-emerald-200/80 rounded-2xl space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 uppercase tracking-wider">
+                <PackageCheck className="w-4 h-4 text-emerald-700" />
+                <span>What are you offering to swap?</span>
+              </div>
+              {listing.exchangePreference && (
+                <p className="text-xs text-emerald-800/90 italic">
+                  Seller’s preference: "{listing.exchangePreference}"
+                </p>
+              )}
+              <input
+                type="text"
+                value={exchangeItemOffered}
+                onChange={(e) => setExchangeItemOffered(e.target.value)}
+                placeholder="e.g., Vintage Levi's Denim Jacket (Size M) or Nike Air Force 1s"
+                className="input-field text-xs bg-white"
+                required={type === 'exchange'}
+              />
             </div>
           )}
+
+          {/* Campus Meetup Location & Time Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-dark-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-forest-700" />
+                <span>Campus Meetup Spot</span>
+              </label>
+              <select
+                value={meetupLocation}
+                onChange={(e) => setMeetupLocation(e.target.value)}
+                className="input-field text-xs"
+              >
+                {CAMPUS_LOCATIONS.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-dark-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Preferred Time Slot</span>
+              </label>
+              <select
+                value={preferredTime}
+                onChange={(e) => setPreferredTime(e.target.value)}
+                className="input-field text-xs"
+              >
+                {TIME_SLOTS.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           {/* Message input */}
           <div>
             <label className="block text-xs font-semibold text-dark-900 uppercase tracking-wider mb-1.5">
-              Personal Note / Campus Meeting Suggestion
+              Personal Note to Seller
             </label>
             <textarea
-              rows={4}
+              rows={3}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder={
                 type === 'purchase'
-                  ? 'Hi! I would like to purchase this. Are you free to meet near the student union or library tomorrow?'
-                  : 'Hi! I would love to trade this with my vintage denim jacket in size M. Let me know if that works!'
+                  ? 'Hi! I would like to purchase this item. Let me know if the meetup spot works for you!'
+                  : 'Hi! I would love to trade this item. Let me know what you think!'
               }
               maxLength={500}
-              className="input-field resize-none text-sm"
+              className="input-field resize-none text-xs"
             />
             <p className="text-[11px] text-muted-500 text-right mt-1">
               {message.length}/500 characters
             </p>
           </div>
 
-          {/* Safety & Non-payment disclaimer */}
+          {/* Safety disclaimer */}
           <div className="flex items-start gap-2 p-3 bg-amber-50/80 border border-amber-200/70 rounded-xl text-[11px] text-amber-900 leading-normal">
             <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
             <span>
-              <strong>College Campus Safety Tip:</strong> ReWear facilitates local student connections. No online payments are processed here. Always meet in public, well-lit campus areas (e.g. Student Center or Library).
+              <strong>Campus Handshake:</strong> All transactions take place in-person on campus. Inspect the item thoroughly before handoff.
             </span>
           </div>
 
@@ -158,7 +236,7 @@ const RequestModal = ({ isOpen, onClose, listing, onSuccess, initialType = 'purc
               className="btn-primary px-5 py-2.5"
             >
               <Send className="w-4 h-4" />
-              {submitting ? 'Sending Request...' : 'Send Request'}
+              {submitting ? 'Sending Proposal...' : 'Send Trade Proposal'}
             </button>
           </div>
         </form>

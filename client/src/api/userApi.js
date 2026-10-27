@@ -11,4 +11,9 @@ export const userApi = {
 export const dashboardApi = {
   getStats: () => api.get('/dashboard/stats'),
   getActivity: () => api.get('/dashboard/activity'),
+  getAdminListings: (params) => api.get('/dashboard/listings', { params }),
+  updateListingStatus: (id, status) => api.patch(`/dashboard/listings/${id}/status`, { status }),
+  deleteListing: (id) => api.delete(`/dashboard/listings/${id}`),
+  getAdminUsers: () => api.get('/dashboard/users'),
+  exportUrl: () => `${api.defaults.baseURL || '/api'}/dashboard/export`,
 };

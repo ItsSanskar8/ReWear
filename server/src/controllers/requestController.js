@@ -6,7 +6,14 @@ const asyncHandler = require('../utils/asyncHandler');
 // @route   POST /api/requests
 // @access  Private
 const createRequest = asyncHandler(async (req, res) => {
-  const { listingId, type, message } = req.body;
+  const {
+    listingId,
+    type,
+    message,
+    meetupLocation,
+    preferredTime,
+    exchangeItemOffered,
+  } = req.body;
 
   if (!listingId || !type) {
     return res.status(400).json({
@@ -66,6 +73,9 @@ const createRequest = asyncHandler(async (req, res) => {
     seller: listing.seller,
     type,
     message: message ? message.trim() : '',
+    meetupLocation: meetupLocation ? meetupLocation.trim() : 'Campus Library Front Entrance',
+    preferredTime: preferredTime ? preferredTime.trim() : 'Flexible',
+    exchangeItemOffered: exchangeItemOffered ? exchangeItemOffered.trim() : '',
     status: 'pending',
   });
 

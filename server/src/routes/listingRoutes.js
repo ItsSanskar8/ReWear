@@ -8,6 +8,8 @@ const {
   updateListing,
   deleteListing,
   getMyListings,
+  addListingQuestion,
+  answerListingQuestion,
 } = require('../controllers/listingController');
 const { protect } = require('../middleware/authMiddleware');
 const validateRequest = require('../middleware/validateRequest');
@@ -51,5 +53,9 @@ router.get('/:id', getListingById);
 router.post('/', protect, createListingValidation, validateRequest, createListing);
 router.put('/:id', protect, updateListing);
 router.delete('/:id', protect, deleteListing);
+
+// Community Questions & Answers
+router.post('/:id/questions', protect, addListingQuestion);
+router.patch('/:id/questions/:questionId', protect, answerListingQuestion);
 
 module.exports = router;

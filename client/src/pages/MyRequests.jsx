@@ -13,6 +13,8 @@ import {
   MessageSquare,
   AlertCircle,
   Ban,
+  MapPin,
+  PackageCheck,
 } from 'lucide-react';
 import { requestApi } from '../api/requestApi';
 import { formatDate, timeAgo } from '../utils/formatDate';
@@ -238,9 +240,31 @@ const MyRequests = () => {
                   </div>
                 </div>
 
+                {/* Proposed Campus Meetup & Offer Strip */}
+                <div className="mt-3.5 flex flex-wrap items-center gap-2 text-xs">
+                  {req.meetupLocation && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-forest-50 text-forest-800 font-medium border border-forest-200/60">
+                      <MapPin className="w-3.5 h-3.5 text-forest-700" />
+                      <span>{req.meetupLocation}</span>
+                    </span>
+                  )}
+                  {req.preferredTime && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-ivory-100 text-dark-800 font-medium border border-border">
+                      <Clock className="w-3.5 h-3.5 text-muted-500" />
+                      <span>{req.preferredTime}</span>
+                    </span>
+                  )}
+                  {req.exchangeItemOffered && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200/80">
+                      <PackageCheck className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Trade Item: {req.exchangeItemOffered}</span>
+                    </span>
+                  )}
+                </div>
+
                 {/* Personal Message from Buyer */}
                 {req.message && (
-                  <div className="mt-4 p-3.5 bg-ivory-100 border border-border/80 rounded-xl text-xs text-dark-800 flex items-start gap-2.5">
+                  <div className="mt-3 p-3.5 bg-ivory-100 border border-border/80 rounded-xl text-xs text-dark-800 flex items-start gap-2.5">
                     <MessageSquare className="w-4 h-4 text-forest-700 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-semibold text-dark-900">Buyer Note: </span>
@@ -340,8 +364,30 @@ const MyRequests = () => {
                   </div>
                 </div>
 
+                {/* Proposed Campus Meetup & Offer Strip */}
+                <div className="mt-3.5 flex flex-wrap items-center gap-2 text-xs">
+                  {req.meetupLocation && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-forest-50 text-forest-800 font-medium border border-forest-200/60">
+                      <MapPin className="w-3.5 h-3.5 text-forest-700" />
+                      <span>{req.meetupLocation}</span>
+                    </span>
+                  )}
+                  {req.preferredTime && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-ivory-100 text-dark-800 font-medium border border-border">
+                      <Clock className="w-3.5 h-3.5 text-muted-500" />
+                      <span>{req.preferredTime}</span>
+                    </span>
+                  )}
+                  {req.exchangeItemOffered && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200/80">
+                      <PackageCheck className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Offered to Swap: {req.exchangeItemOffered}</span>
+                    </span>
+                  )}
+                </div>
+
                 {req.message && (
-                  <div className="mt-3.5 p-3 bg-ivory-100 border border-border/80 rounded-xl text-xs text-dark-800">
+                  <div className="mt-3 p-3 bg-ivory-100 border border-border/80 rounded-xl text-xs text-dark-800">
                     <span className="font-semibold text-dark-900">Your Message: </span>
                     <span>"{req.message}"</span>
                   </div>

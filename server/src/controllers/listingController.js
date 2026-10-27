@@ -129,10 +129,11 @@ const getFeaturedListings = asyncHandler(async (req, res) => {
 // @route   GET /api/listings/:id
 // @access  Public
 const getListingById = asyncHandler(async (req, res) => {
-  const listing = await Listing.findById(req.params.id).populate(
-    'seller',
-    'name email college avatar createdAt'
-  );
+  const listing = await Listing.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { viewsCount: 1 } },
+    { new: true }
+  ).populate('seller', 'name email college avatar createdAt');
 
   if (!listing) {
     return res.status(404).json({
@@ -334,6 +335,71 @@ const getMyListings = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Post a community question on a listing
+// @route   POST /api/listings/:id/questions
+// @access  Private
+const addListingQuestion = asyncHandler(async (req, res) => {
+  const { question } = req.body;
+  if (!question || !question.trim()) {
+    return res.status(400).json({ success: false, message: 'Please enter a valid question.' });
+  }
+
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    return res.status(404).json({ success: false, message: 'Listing not found.' });
+  }
+
+  listing.questions.push({
+    user: req.user._id,
+    userName: req.user.name || 'Campus Student',
+    question: question.trim(),
+    createdAt: new Date(),
+  });
+
+  await listing.save();
+
+  res.status(201).json({
+    success: true,
+    message: 'Question posted successfully.',
+    data: listing.questions,
+  });
+});
+
+// @desc    Answer a community question on a listing (seller only)
+// @route   PATCH /api/listings/:id/questions/:questionId
+// @access  Private
+const answerListingQuestion = asyncHandler(async (req, res) => {
+  const { answer } = req.body;
+  if (!answer || !answer.trim()) {
+    return res.status(400).json({ success: false, message: 'Please enter a valid answer.' });
+  }
+
+  const listing = await Listing.findById(req.params.id);
+  if (!listing) {
+    return res.status(404).json({ success: false, message: 'Listing not found.' });
+  }
+
+  const isSeller = listing.seller.toString() === req.user._id.toString();
+  const isAdmin = req.user.role === 'admin' || req.user.email === 'sanskarbhanderi08@gmail.com';
+  if (!isSeller && !isAdmin) {
+    return res.status(403).json({ success: false, message: 'Only the seller can answer this question.' });
+  }
+
+  const q = listing.questions.id(req.params.questionId);
+  if (!q) {
+    return res.status(404).json({ success: false, message: 'Question not found.' });
+  }
+
+  q.answer = answer.trim();
+  await listing.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Answer posted successfully.',
+    data: listing.questions,
+  });
+});
+
 module.exports = {
   getListings,
   getFeaturedListings,
@@ -342,4 +408,6 @@ module.exports = {
   updateListing,
   deleteListing,
   getMyListings,
+  addListingQuestion,
+  answerListingQuestion,
 };

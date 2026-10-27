@@ -78,6 +78,39 @@ const listingSchema = new mongoose.Schema(
       default: 'active',
       index: true,
     },
+    viewsCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    questions: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        userName: {
+          type: String,
+          default: 'Campus Student',
+        },
+        question: {
+          type: String,
+          required: true,
+          trim: true,
+          maxlength: 300,
+        },
+        answer: {
+          type: String,
+          default: '',
+          trim: true,
+          maxlength: 500,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

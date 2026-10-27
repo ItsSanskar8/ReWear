@@ -13,6 +13,10 @@ import {
   Sparkles,
   Edit,
   Info,
+  Eye,
+  Share2,
+  MessageCircleQuestion,
+  Send,
 } from 'lucide-react';
 import { listingApi } from '../api/listingApi';
 import { useAuth } from '../context/AuthContext';
@@ -38,6 +42,12 @@ const ListingDetails = () => {
   // Request modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [requestType, setRequestType] = useState('purchase');
+
+  // Q&A state
+  const [newQuestion, setNewQuestion] = useState('');
+  const [submittingQuestion, setSubmittingQuestion] = useState(false);
+  const [answeringQuestionId, setAnsweringQuestionId] = useState(null);
+  const [answerText, setAnswerText] = useState('');
 
   const fetchListing = async () => {
     try {
@@ -95,12 +105,43 @@ const ListingDetails = () => {
     setModalOpen(true);
   };
 
+  const handlePostQuestion = async (e) => {
+    e.preventDefault();
+    if (!newQuestion.trim()) return;
+
+    try {
+      setSubmittingQuestion(true);
+      const res = await listingApi.addQuestion(id, newQuestion.trim());
+      toast.success(res.message || 'Question submitted!');
+      setNewQuestion('');
+      await fetchListing();
+    } catch (err) {
+      toast.error(err.message || 'Failed to submit question.');
+    } finally {
+      setSubmittingQuestion(false);
+    }
+  };
+
+  const handleAnswerQuestion = async (questionId) => {
+    if (!answerText.trim()) return;
+
+    try {
+      const res = await listingApi.answerQuestion(id, questionId, answerText.trim());
+      toast.success(res.message || 'Answer posted!');
+      setAnsweringQuestionId(null);
+      setAnswerText('');
+      await fetchListing();
+    } catch (err) {
+      toast.error(err.message || 'Failed to post answer.');
+    }
+  };
+
   const images = listing.images?.length > 0 ? listing.images : [FALLBACK_IMAGE];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
-      {/* Back button */}
-      <div className="mb-6">
+      {/* Top action strip: Back button + Live Views & Share */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-2">
         <Link
           to="/marketplace"
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-600 hover:text-dark-900 transition-colors"
@@ -108,6 +149,25 @@ const ListingDetails = () => {
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Marketplace</span>
         </Link>
+
+        <div className="flex items-center gap-2.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ivory-100 border border-border text-xs text-muted-600 font-medium">
+            <Eye className="w-3.5 h-3.5 text-forest-700" />
+            <span>{listing.viewsCount || 1} campus views</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              toast.success('Listing link copied to clipboard!');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-ivory-100 border border-border text-xs font-semibold text-dark-900 transition-colors shadow-subtle"
+          >
+            <Share2 className="w-3.5 h-3.5 text-forest-800" />
+            <span>Share</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -340,6 +400,131 @@ const ListingDetails = () => {
               <strong>ReWear Campus Note:</strong> Requests signal intent to buy or trade. No online credit card transactions occur on ReWear. Always meet peers in verified public campus areas.
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Community Questions & Answers Section */}
+      <div className="mt-12 bg-white rounded-3xl border border-border p-6 sm:p-8 shadow-subtle space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border">
+          <div>
+            <h3 className="text-xl font-bold text-dark-900 font-editorial flex items-center gap-2">
+              <MessageCircleQuestion className="w-5 h-5 text-forest-800" />
+              <span>Campus Community Q&A</span>
+            </h3>
+            <p className="text-xs text-muted-500 mt-0.5">
+              Have questions about sizing, wear, or campus meetup? Ask the seller publicly.
+            </p>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 bg-ivory-100 rounded-lg text-dark-800 self-start sm:self-auto">
+            {listing.questions?.length || 0} {listing.questions?.length === 1 ? 'Question' : 'Questions'}
+          </span>
+        </div>
+
+        {/* Post Question Form */}
+        {user ? (
+          <form onSubmit={handlePostQuestion} className="space-y-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+                placeholder="Ask about measurements, fabric, or pickup (e.g. Does it fit oversized?)..."
+                maxLength={300}
+                className="input-field text-xs flex-1"
+                disabled={submittingQuestion}
+              />
+              <button
+                type="submit"
+                disabled={submittingQuestion || !newQuestion.trim()}
+                className="btn-primary text-xs px-4 py-2 shrink-0 font-semibold"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>{submittingQuestion ? 'Posting...' : 'Ask'}</span>
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="p-3 bg-ivory-50 border border-border/80 rounded-xl text-xs text-muted-600 flex items-center justify-between">
+            <span>Have a question about this item? Sign in to ask the seller publicly.</span>
+            <Link to="/login" className="btn-outline text-xs py-1 px-3">
+              Sign In
+            </Link>
+          </div>
+        )}
+
+        {/* Questions List */}
+        <div className="space-y-4 pt-2">
+          {listing.questions && listing.questions.length > 0 ? (
+            listing.questions.map((q) => (
+              <div key={q._id} className="p-4 bg-ivory-50/70 border border-border/80 rounded-2xl space-y-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-forest-800 text-white text-[10px] font-bold flex items-center justify-center">
+                    {q.userName?.charAt(0) || 'S'}
+                  </div>
+                  <span className="text-xs font-bold text-dark-900">{q.userName}</span>
+                  <span className="text-[10px] text-muted-500">• {formatDate(q.createdAt)}</span>
+                </div>
+
+                <p className="text-xs text-dark-800 pl-8">
+                  <strong>Q:</strong> {q.question}
+                </p>
+
+                {/* Answer if present */}
+                {q.answer ? (
+                  <div className="ml-8 p-3 bg-emerald-50/70 border border-emerald-200/60 rounded-xl text-xs text-emerald-950 space-y-1">
+                    <p className="font-semibold text-emerald-900 flex items-center gap-1.5">
+                      <span>Seller Response:</span>
+                    </p>
+                    <p>{q.answer}</p>
+                  </div>
+                ) : (isOwner || user?.role === 'admin' || user?.email?.toLowerCase() === 'sanskarbhanderi08@gmail.com') ? (
+                  <div className="ml-8 pt-1">
+                    {answeringQuestionId === q._id ? (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={answerText}
+                          onChange={(e) => setAnswerText(e.target.value)}
+                          placeholder="Type your answer to this student..."
+                          className="input-field text-xs flex-1 bg-white"
+                          maxLength={500}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleAnswerQuestion(q._id)}
+                          className="btn-primary text-xs px-3 py-1.5"
+                        >
+                          Submit Answer
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAnsweringQuestionId(null)}
+                          className="btn-outline text-xs px-2.5 py-1.5"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAnsweringQuestionId(q._id);
+                          setAnswerText('');
+                        }}
+                        className="text-xs font-semibold text-forest-800 hover:text-forest-900 underline"
+                      >
+                        Reply as Seller →
+                      </button>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-muted-500 italic py-2">
+              No questions asked yet. Be the first classmate to inquire!
+            </p>
+          )}
         </div>
       </div>
 

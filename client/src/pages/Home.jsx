@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { listingApi } from '../api/listingApi';
 import ProductGrid from '../components/ProductGrid';
+import EcoImpactCalculator from '../components/EcoImpactCalculator';
 import { useAuth } from '../context/AuthContext';
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80';
@@ -274,6 +275,11 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Interactive Eco Calculator Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <EcoImpactCalculator initialGarments={4} initialShoes={1} />
       </section>
 
       {/* Call to Action Section */}
