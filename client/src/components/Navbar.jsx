@@ -79,9 +79,11 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
-            <NavLink to="/dashboard" className={navLinkClass}>
-              Dashboard
-            </NavLink>
+            {user && (
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Dashboard
+              </NavLink>
+            )}
           </nav>
 
           {/* Right Action / Auth Buttons */}
@@ -215,9 +217,11 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
-            <NavLink to="/dashboard" className={navLinkClass}>
-              Dashboard
-            </NavLink>
+            {user && (
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Dashboard
+              </NavLink>
+            )}
           </div>
 
           <div className="pt-3 border-t border-border">

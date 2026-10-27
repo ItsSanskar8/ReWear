@@ -82,8 +82,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="hover:text-forest-800 transition-colors">
-                  Live Sustainability Dashboard
+                <Link to="/profile" className="hover:text-forest-800 transition-colors">
+                  My Profile & Saved Wishlist
                 </Link>
               </li>
             </ul>
