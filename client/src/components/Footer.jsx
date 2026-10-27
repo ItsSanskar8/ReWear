@@ -86,11 +86,6 @@ const Footer = () => {
                   Live Sustainability Dashboard
                 </Link>
               </li>
-              <li>
-                <a href="/#how-it-works" className="hover:text-forest-800 transition-colors">
-                  How Campus Swaps Work
-                </a>
-              </li>
             </ul>
           </div>
 

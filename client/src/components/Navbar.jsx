@@ -82,12 +82,6 @@ const Navbar = () => {
             <NavLink to="/dashboard" className={navLinkClass}>
               Dashboard
             </NavLink>
-            <a
-              href="/#how-it-works"
-              className="text-sm font-medium text-dark-800 hover:text-forest-800 hover:bg-black/5 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              How It Works
-            </a>
           </nav>
 
           {/* Right Action / Auth Buttons */}
@@ -224,12 +218,6 @@ const Navbar = () => {
             <NavLink to="/dashboard" className={navLinkClass}>
               Dashboard
             </NavLink>
-            <a
-              href="/#how-it-works"
-              className="text-sm font-medium text-dark-800 hover:bg-black/5 px-3 py-2 rounded-lg"
-            >
-              How It Works
-            </a>
           </div>
 
           <div className="pt-3 border-t border-border">

@@ -199,60 +199,6 @@ const Home = () => {
         />
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="bg-forest-900 rounded-3xl p-8 sm:p-12 text-white shadow-card">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-forest-200">
-              Campus Simplified
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold font-editorial mt-1 text-white">
-              How ReWear Works
-            </h2>
-            <p className="text-sm sm:text-base text-forest-100/80 mt-3 leading-relaxed">
-              Trading clothing within your college community takes just three intuitive steps.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-forest-700 text-forest-100 flex items-center justify-center font-bold text-sm mb-4">
-                01
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2 font-editorial">
-                Snap & List
-              </h3>
-              <p className="text-xs text-forest-100/80 leading-relaxed">
-                Take a quick photo of your gently worn clothing, textbook, or sneakers. Set a modest student price or mark it for clothing exchange.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-forest-700 text-forest-100 flex items-center justify-center font-bold text-sm mb-4">
-                02
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2 font-editorial">
-                Request & Connect
-              </h3>
-              <p className="text-xs text-forest-100/80 leading-relaxed">
-                Interested classmates submit purchase or trade proposals with a custom message. Sellers accept or decline right from their requests tab.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
-              <div className="w-10 h-10 rounded-xl bg-forest-700 text-forest-100 flex items-center justify-center font-bold text-sm mb-4">
-                03
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2 font-editorial">
-                Campus Handshake
-              </h3>
-              <p className="text-xs text-forest-100/80 leading-relaxed">
-                Meet up securely in public campus zones like the library or campus student center to inspect, swap, or pick up your items.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Sustainability Impact Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
