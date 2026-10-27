@@ -239,8 +239,8 @@ Create a file named `.env` in the `server` directory:
 ```env
 PORT=5001
 NODE_ENV=development
-MONGODB_URI=mongodb://127.0.0.1:27017/rewear
-JWT_SECRET=rewear_campus_super_secure_jwt_secret_key_2026_xyz
+MONGODB_URI=your_mongodb_connection_uri
+JWT_SECRET=your_jwt_secret_key
 CLIENT_URL=http://localhost:5173
 ```
 *(Note: Port 5001 is used by default because macOS ControlCenter occupies port 5000).*
