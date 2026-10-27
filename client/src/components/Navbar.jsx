@@ -11,8 +11,11 @@ import {
   LogOut,
   ChevronDown,
   Sparkles,
+  MessageSquare,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { notificationApi } from '../api/notificationApi';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -21,24 +24,56 @@ const Navbar = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
+
   const dropdownRef = useRef(null);
+  const notifRef = useRef(null);
 
   // Close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setProfileDropdownOpen(false);
+    setNotificationDropdownOpen(false);
   }, [location.pathname]);
 
-  // Click outside to close profile dropdown
+  // Click outside to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setProfileDropdownOpen(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setNotificationDropdownOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Fetch live notifications
+  useEffect(() => {
+    if (user) {
+      notificationApi
+        .getMyNotifications()
+        .then((res) => {
+          if (res && res.data) {
+            setNotifications(res.data.notifications || []);
+            setUnreadNotifs(res.data.unreadCount || 0);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user, location.pathname]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationApi.markAllAsRead();
+      setUnreadNotifs(0);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {}
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -84,6 +119,11 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
+            {user && (
+              <NavLink to="/messages" className={navLinkClass}>
+                Messages
+              </NavLink>
+            )}
             {isAdmin && (
               <NavLink to="/dashboard" className={navLinkClass}>
                 Dashboard
@@ -99,6 +139,66 @@ const Navbar = () => {
                   <PlusCircle className="w-4 h-4" />
                   <span>List an Item</span>
                 </Link>
+
+                {/* Notification Bell Dropdown */}
+                <div className="relative" ref={notifRef}>
+                  <button
+                    type="button"
+                    onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
+                    className="relative p-2 rounded-full border border-border bg-ivory-50 hover:bg-ivory-100 text-dark-800 transition-colors"
+                    aria-label="View notifications"
+                  >
+                    <Bell className="w-4 h-4" />
+                    {unreadNotifs > 0 && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">
+                        {unreadNotifs > 9 ? '9+' : unreadNotifs}
+                      </span>
+                    )}
+                  </button>
+
+                  {notificationDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-dropdown border border-border py-2 animate-fade-in z-50">
+                      <div className="px-4 py-2 border-b border-border/80 flex items-center justify-between">
+                        <span className="text-xs font-bold text-dark-900">Notifications</span>
+                        {unreadNotifs > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleMarkAllRead}
+                            className="text-[10px] text-forest-800 font-semibold hover:underline"
+                          >
+                            Mark all read
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="max-h-72 overflow-y-auto divide-y divide-border/60">
+                        {notifications.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-muted-500">
+                            No notifications yet
+                          </div>
+                        ) : (
+                          notifications.slice(0, 8).map((n) => (
+                            <Link
+                              key={n._id}
+                              to={n.link || '/my-requests'}
+                              onClick={() => setNotificationDropdownOpen(false)}
+                              className={`block p-3 hover:bg-ivory-50 transition-colors ${
+                                !n.read ? 'bg-forest-50/50' : ''
+                              }`}
+                            >
+                              <p className="text-xs font-bold text-dark-900 leading-tight">
+                                {n.title}
+                              </p>
+                              <p className="text-[11px] text-muted-600 truncate mt-0.5">
+                                {n.message}
+                              </p>
+                            </Link>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* User Dropdown */}
                 <div className="relative" ref={dropdownRef}>
@@ -157,6 +257,13 @@ const Navbar = () => {
                         >
                           <ArrowLeftRight className="w-4 h-4 text-emerald-700" />
                           My Requests
+                        </Link>
+                        <Link
+                          to="/messages"
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-dark-800 hover:bg-forest-50 hover:text-forest-900"
+                        >
+                          <MessageSquare className="w-4 h-4 text-forest-700" />
+                          Campus Messages
                         </Link>
                         {isAdmin && (
                           <Link
@@ -231,6 +338,11 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
+            {user && (
+              <NavLink to="/messages" className={navLinkClass}>
+                Messages
+              </NavLink>
+            )}
             {isAdmin && (
               <NavLink to="/dashboard" className={navLinkClass}>
                 Dashboard
@@ -279,6 +391,13 @@ const Navbar = () => {
                     List Item
                   </Link>
                   <Link
+                    to="/messages"
+                    className="btn-outline text-xs py-2 justify-center"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    Messages
+                  </Link>
+                  <Link
                     to="/my-listings"
                     className="btn-outline text-xs py-2 justify-center"
                   >
@@ -292,9 +411,9 @@ const Navbar = () => {
                   </Link>
                   <Link
                     to="/profile"
-                    className="btn-outline text-xs py-2 justify-center"
+                    className="btn-outline text-xs py-2 justify-center col-span-2"
                   >
-                    Profile
+                    Profile & Saved
                   </Link>
                 </div>
 

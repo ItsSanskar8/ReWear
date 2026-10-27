@@ -15,6 +15,8 @@ import {
   Ban,
   MapPin,
   PackageCheck,
+  ShieldCheck,
+  Star,
 } from 'lucide-react';
 import { requestApi } from '../api/requestApi';
 import { formatDate, timeAgo } from '../utils/formatDate';
@@ -22,6 +24,8 @@ import { formatCurrency } from '../utils/formatCurrency';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EmptyState from '../components/EmptyState';
 import ConfirmModal from '../components/ConfirmModal';
+import MeetupPassModal from '../components/MeetupPassModal';
+import ReviewModal from '../components/ReviewModal';
 import toast from 'react-hot-toast';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=400&q=80';
@@ -34,6 +38,14 @@ const MyRequests = () => {
 
   // Action states
   const [actionLoadingId, setActionLoadingId] = useState(null);
+
+  // Meetup Pass Modal state
+  const [selectedPassRequest, setSelectedPassRequest] = useState(null);
+  const [passModalOpen, setPassModalOpen] = useState(false);
+
+  // Review Modal state
+  const [reviewModalData, setReviewModalData] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const fetchRequests = async () => {
     try {
@@ -297,10 +309,23 @@ const MyRequests = () => {
                   </div>
                 )}
 
-                {/* Status notice if already accepted */}
+                {/* Status notice & Meetup Pass if accepted */}
                 {req.status === 'accepted' && (
-                  <div className="mt-3 text-xs text-emerald-800 font-medium bg-emerald-50 border border-emerald-200/60 p-2.5 rounded-xl">
-                    ✓ You accepted this request. Coordinate campus meetup at {req.buyer?.email || 'student email'}.
+                  <div className="mt-3.5 pt-3 border-t border-border flex flex-wrap items-center justify-between gap-2">
+                    <div className="text-xs text-emerald-800 font-medium">
+                      ✓ You accepted this request. Coordinate campus meetup at <strong className="text-dark-900">{req.buyer?.email || 'student email'}</strong>.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPassRequest(req);
+                        setPassModalOpen(true);
+                      }}
+                      className="btn-outline text-xs px-3.5 py-1.5 border-forest-800 text-forest-800 hover:bg-forest-50 font-semibold"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                      View Meetup Pass
+                    </button>
                   </div>
                 )}
               </div>
@@ -407,10 +432,75 @@ const MyRequests = () => {
                     </button>
                   </div>
                 )}
+
+                {/* Accepted actions for Buyer: Meetup Pass & Rate Seller */}
+                {req.status === 'accepted' && (
+                  <div className="mt-3.5 pt-3 border-t border-border flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs text-emerald-800 font-semibold flex items-center gap-1.5">
+                      <CheckCircle className="w-4 h-4 text-emerald-600" />
+                      Accepted by Seller! Ready for Campus Handshake.
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedPassRequest(req);
+                          setPassModalOpen(true);
+                        }}
+                        className="btn-outline text-xs px-3.5 py-1.5 border-forest-800 text-forest-800 hover:bg-forest-50 font-semibold"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                        View Meetup Pass
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReviewModalData({
+                            sellerId: req.seller?._id,
+                            listingId: req.listing?._id,
+                            sellerName: req.seller?.name,
+                            listingTitle: req.listing?.title,
+                          });
+                          setReviewModalOpen(true);
+                        }}
+                        className="btn-primary text-xs px-3.5 py-1.5 font-semibold"
+                      >
+                        <Star className="w-3.5 h-3.5 mr-1 fill-amber-300 text-amber-300" />
+                        Rate Seller
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )
+      )}
+
+      {/* Meetup Pass Modal */}
+      <MeetupPassModal
+        isOpen={passModalOpen}
+        onClose={() => {
+          setPassModalOpen(false);
+          setSelectedPassRequest(null);
+        }}
+        request={selectedPassRequest}
+      />
+
+      {/* Seller Review Modal */}
+      {reviewModalData && (
+        <ReviewModal
+          isOpen={reviewModalOpen}
+          onClose={() => {
+            setReviewModalOpen(false);
+            setReviewModalData(null);
+          }}
+          sellerId={reviewModalData.sellerId}
+          listingId={reviewModalData.listingId}
+          sellerName={reviewModalData.sellerName}
+          listingTitle={reviewModalData.listingTitle}
+          onSuccess={fetchRequests}
+        />
       )}
     </div>
   );

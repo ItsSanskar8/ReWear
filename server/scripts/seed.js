@@ -7,6 +7,9 @@ dotenv.config();
 const User = require('../src/models/User');
 const Listing = require('../src/models/Listing');
 const Request = require('../src/models/Request');
+const Review = require('../src/models/Review');
+const Message = require('../src/models/Message');
+const Notification = require('../src/models/Notification');
 
 const seedData = async () => {
   try {
@@ -19,6 +22,9 @@ const seedData = async () => {
     await User.deleteMany({});
     await Listing.deleteMany({});
     await Request.deleteMany({});
+    await Review.deleteMany({});
+    await Message.deleteMany({});
+    await Notification.deleteMany({});
     console.log('Previous data cleared.');
 
     // Prepare demo users
@@ -325,13 +331,78 @@ const seedData = async () => {
     ]);
 
     console.log('Sample requests created successfully.');
+
+    // Seed Sample Reviews
+    await Review.insertMany([
+      {
+        seller: marcus._id,
+        buyer: dev._id,
+        listing: patagoniaListing._id,
+        rating: 5,
+        comment: 'Super fast meetup at the campus center! Jacket was exactly as described in pristine condition.',
+        tags: ['⚡ Fast Responder', '📦 Item as Described', '🤝 Friendly Meetup'],
+      },
+      {
+        seller: elena._id,
+        buyer: sarah._id,
+        listing: denimListing._id,
+        rating: 5,
+        comment: 'Great classmate to trade with! Highly recommended for any campus exchanges.',
+        tags: ['💯 Highly Recommended', '⏱️ Punctual', '🌟 Great Condition'],
+      },
+    ]);
+    console.log('Sample reviews created.');
+
+    // Seed Sample Messages
+    await Message.insertMany([
+      {
+        sender: dev._id,
+        recipient: marcus._id,
+        listing: patagoniaListing._id,
+        text: 'Hey Marcus! Are you available around 3 PM outside the student union?',
+        read: true,
+      },
+      {
+        sender: marcus._id,
+        recipient: dev._id,
+        listing: patagoniaListing._id,
+        text: 'Yes! 3 PM works perfectly for me. See you near the north entrance.',
+        read: false,
+      },
+    ]);
+    console.log('Sample campus messages created.');
+
+    // Seed Sample Notifications
+    await Notification.insertMany([
+      {
+        recipient: adminUser._id,
+        sender: elena._id,
+        title: 'New campus listing published',
+        message: 'Vintage Oversized Denim Trucker Jacket listed for sale.',
+        link: '/marketplace',
+        type: 'listing',
+        read: false,
+      },
+      {
+        recipient: dev._id,
+        sender: marcus._id,
+        title: 'Trade Request Accepted!',
+        message: 'Marcus accepted your purchase request for Patagonia Synchilla Fleece.',
+        link: '/my-requests',
+        type: 'request',
+        read: false,
+      },
+    ]);
+    console.log('Sample campus notifications created.');
+
     console.log('----------------------------------------------------');
     console.log('Seed completed successfully!');
     console.log('Demo Credentials:');
-    console.log('  1) elena@campus.edu  / password123 (Stanford University)');
-    console.log('  2) marcus@campus.edu / password123 (UC Berkeley)');
-    console.log('  3) sarah@campus.edu  / password123 (Columbia University)');
-    console.log('  4) dev@campus.edu    / password123 (NYU Stern)');
+    console.log('  Admin: sanskarbhanderi08@gmail.com / password123 (Sanskar Bhanderi)');
+    console.log('  User:  elena@campus.edu  / password123 (Stanford University)');
+    console.log('  User:  marcus@campus.edu / password123 (UC Berkeley)');
+    console.log('  User:  sarah@campus.edu  / password123 (Columbia University)');
+    console.log('  User:  dev@campus.edu    / password123 (NYU Stern)');
     console.log('----------------------------------------------------');
 
     process.exit(0);

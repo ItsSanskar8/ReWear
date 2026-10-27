@@ -8,6 +8,9 @@ const listingRoutes = require('./routes/listingRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const userRoutes = require('./routes/userRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -71,6 +74,9 @@ app.use('/api/listings', listingRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error Handling
 app.use(notFound);

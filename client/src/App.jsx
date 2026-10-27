@@ -15,6 +15,7 @@ import MyListings from './pages/MyListings';
 import MyRequests from './pages/MyRequests';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
+import Messages from './pages/Messages';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -68,6 +69,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute>
+                  <Messages />
                 </ProtectedRoute>
               }
             />

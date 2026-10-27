@@ -17,8 +17,11 @@ import {
   Share2,
   MessageCircleQuestion,
   Send,
+  Star,
+  MessageSquare,
 } from 'lucide-react';
 import { listingApi } from '../api/listingApi';
+import { reviewApi } from '../api/reviewApi';
 import { useAuth } from '../context/AuthContext';
 import { formatCurrency } from '../utils/formatCurrency';
 import { formatDate } from '../utils/formatDate';
@@ -49,6 +52,9 @@ const ListingDetails = () => {
   const [answeringQuestionId, setAnsweringQuestionId] = useState(null);
   const [answerText, setAnswerText] = useState('');
 
+  // Seller reviews state
+  const [sellerReviews, setSellerReviews] = useState({ reviews: [], totalReviews: 0, averageRating: 5.0 });
+
   const fetchListing = async () => {
     try {
       setLoading(true);
@@ -56,6 +62,15 @@ const ListingDetails = () => {
       const res = await listingApi.getListingById(id);
       if (res && res.data) {
         setListing(res.data);
+        if (res.data.seller?._id) {
+          reviewApi.getSellerReviews(res.data.seller._id)
+            .then((r) => {
+              if (r && r.data) {
+                setSellerReviews(r.data);
+              }
+            })
+            .catch(() => {});
+        }
       }
     } catch (err) {
       setError(err.message || 'Unable to load listing details.');
@@ -307,6 +322,23 @@ const ListingDetails = () => {
                   </button>
                 </div>
 
+                {/* Direct Campus Messenger Action */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!user) {
+                      toast.error('Please sign in to chat with the seller.');
+                      navigate('/login', { state: { from: { pathname: `/listings/${id}` } } });
+                      return;
+                    }
+                    navigate(`/messages?user=${listing.seller?._id}&listing=${listing._id}`);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-forest-800 text-forest-800 hover:bg-forest-50 font-semibold text-xs transition-colors shadow-subtle"
+                >
+                  <MessageSquare className="w-4 h-4 text-forest-800" />
+                  <span>Chat Directly with Seller</span>
+                </button>
+
                 <p className="text-[11px] text-muted-500 text-center">
                   Submitting a request contacts the student seller directly on campus.
                 </p>
@@ -380,16 +412,30 @@ const ListingDetails = () => {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <h4 className="text-sm font-bold text-dark-900 truncate">
-                {listing.seller?.name || 'Campus Student'}
-              </h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-bold text-dark-900 truncate">
+                  {listing.seller?.name || 'Campus Student'}
+                </h4>
+                <div className="flex items-center gap-1 text-amber-500">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  <span className="text-xs font-bold text-dark-900">
+                    {sellerReviews.totalReviews > 0 ? sellerReviews.averageRating : '5.0'}
+                  </span>
+                </div>
+              </div>
               <p className="text-xs text-muted-600 flex items-center gap-1 mt-0.5">
                 <School className="w-3.5 h-3.5 text-forest-700 shrink-0" />
                 <span className="truncate">{listing.seller?.college || 'College Campus'}</span>
               </p>
-              <p className="text-[10px] text-muted-500 mt-0.5">
-                Member since {formatDate(listing.seller?.createdAt)}
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] text-muted-500">
+                  Member since {formatDate(listing.seller?.createdAt)}
+                </span>
+                <span className="text-[10px] text-muted-400">•</span>
+                <span className="text-[10px] text-forest-800 font-semibold">
+                  {sellerReviews.totalReviews} campus {sellerReviews.totalReviews === 1 ? 'review' : 'reviews'}
+                </span>
+              </div>
             </div>
           </div>
 
