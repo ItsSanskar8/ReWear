@@ -11,7 +11,9 @@ import {
   Sparkles,
   ExternalLink,
   PlusCircle,
+  ShieldCheck,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import {
   BarChart,
   Bar,
@@ -33,6 +35,7 @@ import toast from 'react-hot-toast';
 const PIE_COLORS = ['#346B54', '#2B5B47', '#E11D48', '#D97706', '#64748B'];
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -76,15 +79,21 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 text-forest-900 text-xs font-semibold mb-2">
-            <TrendingUp className="w-3.5 h-3.5 text-forest-700" />
-            <span>MongoDB Live Telemetry</span>
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 text-forest-900 text-xs font-semibold">
+              <TrendingUp className="w-3.5 h-3.5 text-forest-700" />
+              <span>MongoDB Live Telemetry</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Platform Administrator: {user?.name || 'Sanskar Bhanderi'}</span>
+            </div>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-dark-900 font-editorial">
-            Campus Marketplace Dashboard
+            Admin Analytics Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-muted-600 mt-1">
-            Real-time insights across items listed, circular swaps, and student inquiries.
+            Restricted Admin access • Real-time platform telemetry across circular trades, listings, and college activity.
           </p>
         </div>
 

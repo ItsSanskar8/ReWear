@@ -52,6 +52,11 @@ const Navbar = () => {
         : 'text-dark-800 hover:text-forest-800 hover:bg-black/5'
     }`;
 
+  const isAdmin =
+    user &&
+    (user.role === 'admin' ||
+      user.email?.toLowerCase() === 'sanskarbhanderi08@gmail.com');
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-border transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,7 +84,7 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
-            {user && (
+            {isAdmin && (
               <NavLink to="/dashboard" className={navLinkClass}>
                 Dashboard
               </NavLink>
@@ -123,11 +128,18 @@ const Navbar = () => {
                   {profileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-dropdown border border-border py-2 animate-fade-in z-50">
                       <div className="px-4 py-2 border-b border-border/80">
-                        <p className="text-xs font-bold text-dark-900 truncate">
-                          {user.name}
-                        </p>
+                        <div className="flex items-center justify-between gap-1">
+                          <p className="text-xs font-bold text-dark-900 truncate">
+                            {user.name}
+                          </p>
+                          {isAdmin && (
+                            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-forest-100 text-forest-800 rounded">
+                              Admin
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[11px] text-muted-500 truncate">
-                          {user.college}
+                          {user.email || user.college}
                         </p>
                       </div>
 
@@ -146,13 +158,15 @@ const Navbar = () => {
                           <ArrowLeftRight className="w-4 h-4 text-emerald-700" />
                           My Requests
                         </Link>
-                        <Link
-                          to="/dashboard"
-                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-dark-800 hover:bg-forest-50 hover:text-forest-900"
-                        >
-                          <LayoutDashboard className="w-4 h-4 text-dark-700" />
-                          Analytics Dashboard
-                        </Link>
+                        {isAdmin && (
+                          <Link
+                            to="/dashboard"
+                            className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-dark-800 hover:bg-forest-50 hover:text-forest-900"
+                          >
+                            <LayoutDashboard className="w-4 h-4 text-forest-700" />
+                            Admin Dashboard
+                          </Link>
+                        )}
                         <Link
                           to="/profile"
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-dark-800 hover:bg-forest-50 hover:text-forest-900"
@@ -217,7 +231,7 @@ const Navbar = () => {
             <NavLink to="/marketplace" className={navLinkClass}>
               Explore Marketplace
             </NavLink>
-            {user && (
+            {isAdmin && (
               <NavLink to="/dashboard" className={navLinkClass}>
                 Dashboard
               </NavLink>
@@ -240,11 +254,18 @@ const Navbar = () => {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-dark-900 truncate">
-                      {user.name}
-                    </p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-bold text-dark-900 truncate">
+                        {user.name}
+                      </p>
+                      {isAdmin && (
+                        <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-forest-100 text-forest-800 rounded">
+                          Admin
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-500 truncate">
-                      {user.college}
+                      {user.email || user.college}
                     </p>
                   </div>
                 </div>

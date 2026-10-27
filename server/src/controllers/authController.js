@@ -19,6 +19,11 @@ const sendTokenResponse = (user, statusCode, res, message) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
+  const isAdmin =
+    user.role === 'admin' ||
+    (user.email && user.email.toLowerCase() === 'sanskarbhanderi08@gmail.com');
+  const role = isAdmin ? 'admin' : (user.role || 'user');
+
   res.status(statusCode).json({
     success: true,
     message,
@@ -28,6 +33,7 @@ const sendTokenResponse = (user, statusCode, res, message) => {
       email: user.email,
       college: user.college,
       avatar: user.avatar,
+      role,
       wishlist: user.wishlist || [],
       token, // Dual authentication support for cross-domain requests
       createdAt: user.createdAt,
@@ -50,6 +56,8 @@ const registerUser = asyncHandler(async (req, res) => {
     });
   }
 
+  const isAdmin = email.toLowerCase().trim() === 'sanskarbhanderi08@gmail.com';
+
   // Create new user (password hashed in pre-save hook)
   const user = await User.create({
     name: name.trim(),
@@ -57,6 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     college: college.trim(),
     avatar: avatar || '',
+    role: isAdmin ? 'admin' : 'user',
   });
 
   sendTokenResponse(user, 201, res, 'Account created successfully! Welcome to ReWear.');
@@ -94,6 +103,16 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   }
 
+  // Auto-promote designated admin account if role is not set
+  if (
+    user.email &&
+    user.email.toLowerCase() === 'sanskarbhanderi08@gmail.com' &&
+    user.role !== 'admin'
+  ) {
+    user.role = 'admin';
+    await user.save();
+  }
+
   sendTokenResponse(user, 200, res, 'Logged in successfully.');
 });
 
@@ -121,6 +140,16 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).populate('wishlist', 'title price images condition category');
+
+  if (
+    user &&
+    user.email &&
+    user.email.toLowerCase() === 'sanskarbhanderi08@gmail.com' &&
+    user.role !== 'admin'
+  ) {
+    user.role = 'admin';
+    await user.save();
+  }
 
   res.status(200).json({
     success: true,

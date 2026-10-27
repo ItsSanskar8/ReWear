@@ -27,10 +27,19 @@ const seedData = async () => {
 
     const users = await User.insertMany([
       {
+        name: 'Sanskar Bhanderi',
+        email: 'sanskarbhanderi08@gmail.com',
+        password: hashedPassword,
+        college: 'Campus Administrator',
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      },
+      {
         name: 'Elena Rostova',
         email: 'elena@campus.edu',
         password: hashedPassword,
         college: 'Stanford University',
+        role: 'user',
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
       },
       {
@@ -38,6 +47,7 @@ const seedData = async () => {
         email: 'marcus@campus.edu',
         password: hashedPassword,
         college: 'UC Berkeley',
+        role: 'user',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
       },
       {
@@ -45,6 +55,7 @@ const seedData = async () => {
         email: 'sarah@campus.edu',
         password: hashedPassword,
         college: 'Columbia University',
+        role: 'user',
         avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
       },
       {
@@ -52,11 +63,12 @@ const seedData = async () => {
         email: 'dev@campus.edu',
         password: hashedPassword,
         college: 'NYU Stern',
+        role: 'user',
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
       },
     ]);
 
-    const [elena, marcus, sarah, dev] = users;
+    const [adminUser, elena, marcus, sarah, dev] = users;
     console.log(`Created ${users.length} demo users.`);
 
     // Prepare listings across all categories
